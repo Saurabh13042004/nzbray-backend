@@ -46,12 +46,14 @@ app.get('/groups', async (req, res) => {
         const name = $(elem).find('.group-detail-name a').text();
         const last_update = $(elem).find('.group-detail-last-post').text();
         const last_scan_date = $(elem).find('.group-detail-last-scan').text();
+        const activity_per_week = $(elem).find('.group-detail-activity').text();
 
         groupDetails.push({
           count,
           name,
           last_update,
-          last_scan_date
+          last_scan_date,
+          activity_per_week
         });
       }
     });
@@ -79,12 +81,14 @@ app.get('/groups/popular', async (req, res) => {
         const name = $(elem).find('.group-detail-name a').text();
         const last_update = $(elem).find('.group-detail-last-post').text();
         const last_scan_date = $(elem).find('.group-detail-last-scan').text();
+        const activity_per_week = $(elem).find('.group-detail-activity').text();
 
         groupDetails.push({
           count,
           name,
           last_update,
-          last_scan_date
+          last_scan_date,
+          activity_per_week
         });
       }
     });
@@ -112,12 +116,14 @@ app.get('/groups/all', async (req, res) => {
         const name = $(elem).find('.group-detail-name a').text();
         const last_update = $(elem).find('.group-detail-last-post').text();
         const last_scan_date = $(elem).find('.group-detail-last-scan').text();
+        const activity_per_week = $(elem).find('.group-detail-activity').text();
 
         groupDetails.push({
           count,
           name,
           last_update,
-          last_scan_date
+          last_scan_date,
+          activity_per_week
         });
       }
     });
@@ -230,12 +236,14 @@ app.get('/groups/search', async (req, res) => {
         const name = $(elem).find('.group-detail-name a').text();
         const last_update = $(elem).find('.group-detail-last-post').text();
         const last_scan_date = $(elem).find('.group-detail-last-scan').text();
+        const activity_per_week = $(elem).find('.group-detail-activity').text();
 
         groupDetails.push({
           count,
           name,
           last_update,
-          last_scan_date
+          last_scan_date,
+          activity_per_week
         });
       }
     });
