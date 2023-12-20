@@ -211,21 +211,21 @@ app.get('/post-details/:postId', async (req, res) => {
 });
 
 
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
-// Serve React app in production
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-  });
-}
+// const __filename = new URL(import.meta.url).pathname;
+// const __dirname = path.dirname(__filename);
+// // Serve React app in production
+// if (process.env.NODE_ENV === 'production') {
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+//   });
+// }
 
-// Serve React app in production
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-  });
-}
+// // Serve React app in production
+// if (process.env.NODE_ENV === 'production') {
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+//   });
+// }
 
 
 // app.get('/search', async (req, res) => {
