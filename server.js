@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import cheerio from 'cheerio';
 import axios from 'axios';
+import path from 'path';
 
 const app = express();
 const port = 3001;
