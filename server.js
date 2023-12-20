@@ -137,11 +137,10 @@ app.get('/groups/all', async (req, res) => {
 
 app.get('/search', async (req, res) => {
   try {
-    const { q, page = 1 } = req.query;
+    const { q, page = 1, ft = '', gr = '', po = '', so = 'Date' } = req.query;
     const resultsPerPage = 50;
 
-    // Adjust the URL based on the page number
-    const url = `https://www.nzbking.com/?q=${q}&o=${(page - 1) * resultsPerPage}`;
+    const url = `https://www.nzbking.com/?q=${q}&o=${(page - 1) * resultsPerPage}&ft=${ft}&gr=${gr}&po=${po}&so=${so}`;
 
     const response = await axios.get(url);
     const html = response.data;
@@ -149,12 +148,11 @@ app.get('/search', async (req, res) => {
     const searchResults = [];
 
     $('.search-result').each((i, elem) => {
-      if (i !== 0) { // Skip the header row
+      if (i !== 0) {
         const title = $(elem).find('.search-subject').text();
         const poster = $(elem).find('.search-poster a').text();
         const grp = $(elem).find('.search-groups').text();
         const nzbId = $(elem).find('a.button').attr('href').match(/\/nzb:(\w+)\//)[1];
-      
 
         searchResults.push({
           title,
@@ -171,6 +169,60 @@ app.get('/search', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/post-details/:postId', async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Adjust the URL based on your backend API endpoint for fetching post details
+    const postDetailsUrl = `https://www.nzbking.com/details:${postId}/`;
+
+    // Fetch the post details
+    const response = await axios.get(postDetailsUrl);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const headers = $('.post-detail-header').map((index, element) => $(element).text().trim()).get();
+    const values = $('.post-detail-value').map((index, element) => $(element).text().trim()).get();
+    const fileSize = $('.file-detail-size').map((index, element) => $(element).text().trim()).get();
+    const fileName = $('.file-detail-name').map((index, element) => $(element).text().trim()).get();
+
+
+    const formattedDetails = headers.map((header, index) => {
+      return {
+        label: header,
+        content: values[index],
+      };
+    });
+
+    const fileDetails = fileName.map((name, index) => {
+      return {
+        name,
+        size: fileSize[index],
+      };
+    });
+
+    res.json({ header: 'Details', value: formattedDetails, fileDetails });
+  } catch (error) {
+    console.error('Error fetching post details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Serve React app in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
+}
+
+// Serve React app in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 
 // app.get('/search', async (req, res) => {
@@ -254,6 +306,67 @@ app.get('/groups/search', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// ... (existing code)
+
+app.get('/group/:groupName', async (req, res) => {
+  try {
+    const { groupName } = req.params;
+
+    // Adjust the URL based on your backend API endpoint for fetching group details
+    const groupDetailsUrl = `https://www.nzbking.com/group/${groupName}`;
+
+    // Fetch the group details
+    const response = await axios.get(groupDetailsUrl);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const groupDetails = $('.search-result').map((index, element) => {
+      const subjectElem = $(element).find('.search-subject');
+
+      const title = subjectElem.contents().first().text().trim();
+      const nzbLink = subjectElem.find('a.button[href^="/nzb"]');
+      const nzbIdMatch = nzbLink.attr('href') ? nzbLink.attr('href').match(/\/nzb:(\w+)\//) : null;
+      const nzbId = nzbIdMatch ? nzbIdMatch[1] : null;
+
+      const nfoLink = subjectElem.find('a.button[href^="/nfo"]').attr('href');
+      const detailsLink = subjectElem.find('a.button[href^="/details"]').attr('href');
+      const parts = subjectElem.contents().filter((index, content) => $(content).text().includes('parts:')).text().trim();
+      const size = subjectElem.contents().filter((index, content) => $(content).text().includes('size:')).text().trim();
+      const filetypes = subjectElem.contents().filter((index, content) => $(content).text().includes('filetypes:')).text().trim();
+
+
+
+
+
+
+      const poster = $(element).find('.search-poster a').text().trim();
+      const groups = $(element).find('.search-groups').text().trim();
+      const age = $(element).find('.search-age').text().trim();
+
+      return {
+        title,
+        nzbId,
+        nfoLink,
+        detailsLink,
+        parts,
+        size,
+        filetypes,
+        poster,
+        groups,
+        age,
+      };
+    }).get();
+
+    res.json(groupDetails);
+  } catch (error) {
+    console.error('Error fetching group details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ... (existing code)
+
 
 // ... (existing code)
 
